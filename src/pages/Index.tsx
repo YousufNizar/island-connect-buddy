@@ -1,18 +1,20 @@
 import { useState } from "react";
-import { MapPin, Users, Calendar, Shield, User } from "lucide-react";
+import { MapPin, Users, Calendar, Shield, User, Store } from "lucide-react";
 import MapView from "@/components/MapView";
 import ConnectFeed from "@/components/ConnectFeed";
 import EventsPage from "@/components/EventsPage";
 import SafetyPage from "@/components/SafetyPage";
 import ProfilePage from "@/components/ProfilePage";
+import MarketplacePage from "@/components/MarketplacePage";
 
 const Index = () => {
-  const [activeTab, setActiveTab] = useState<"map" | "connect" | "events" | "safety" | "profile">("map");
+  const [activeTab, setActiveTab] = useState<"map" | "connect" | "events" | "marketplace" | "safety" | "profile">("map");
 
   const tabs = [
     { id: "map" as const, icon: MapPin, label: "Explore" },
     { id: "connect" as const, icon: Users, label: "Connect" },
     { id: "events" as const, icon: Calendar, label: "Events" },
+    { id: "marketplace" as const, icon: Store, label: "Artisans" },
     { id: "safety" as const, icon: Shield, label: "Safety" },
     { id: "profile" as const, icon: User, label: "Profile" },
   ];
@@ -24,6 +26,7 @@ const Index = () => {
         {activeTab === "map" && <MapView />}
         {activeTab === "connect" && <ConnectFeed />}
         {activeTab === "events" && <EventsPage />}
+        {activeTab === "marketplace" && <MarketplacePage />}
         {activeTab === "safety" && <SafetyPage />}
         {activeTab === "profile" && <ProfilePage />}
       </main>
