@@ -50,6 +50,37 @@ service cloud.firestore {
                       request.auth.token.admin == true;
     }
     
+    // ===== QR CODE TRACKING - LOCATION VISITS =====
+    match /location_visits/{visitId} {
+      // Anyone can read visits (for monitoring)
+      allow read: if true;
+      
+      // Authenticated users can create visits
+      allow create: if request.auth != null &&
+                      request.resource.data.keys().hasAll(['touristName', 'touristPhone', 'locationId', 'locationName', 'checkInTime', 'expectedDuration', 'status', 'qrCode']);
+      
+      // Authenticated users can update visits (for check-out and status changes)
+      allow update: if request.auth != null;
+      
+      // No deletion of visit records for safety audit trail
+      allow delete: if false;
+    }
+    
+    // ===== QR CODE TRACKING - SAFETY ALERTS =====
+    match /safety_alerts/{alertId} {
+      // Anyone can read alerts (for monitoring)
+      allow read: if true;
+      
+      // System can create alerts
+      allow create: if request.auth != null;
+      
+      // Authorities can update alerts (mark resolved)
+      allow update: if request.auth != null;
+      
+      // No deletion of alert records for safety audit trail
+      allow delete: if false;
+    }
+    
     // ===== USER PROFILES (if needed) =====
     match /users/{userId} {
       // Users can read their own profile and public profiles
