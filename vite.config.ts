@@ -5,6 +5,10 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
+   define: {
+    'process.env.VITE_GOOGLE_MAPS_API_KEY': JSON.stringify(process.env.VITE_GOOGLE_MAPS_API_KEY),
+    'process.env.VITE_GOOGLE_MAPS_LIBRARY': JSON.stringify(process.env.VITE_GOOGLE_MAPS_LIBRARY),
+  },
   server: {
     host: "::",
     port: 8080,

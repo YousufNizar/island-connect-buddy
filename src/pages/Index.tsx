@@ -29,6 +29,7 @@ const Index = () => {
         {activeTab === "marketplace" && <MarketplacePage />}
         {activeTab === "safety" && <SafetyPage />}
         {activeTab === "profile" && <ProfilePage />}
+        
       </main>
 
       {/* Bottom Navigation */}

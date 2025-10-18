@@ -162,3 +162,18 @@ All colors MUST be HSL.
     @apply inline-block w-3 h-3 rounded-full bg-green-500 ring-2 ring-background;
   }
 }
+
+/* Leaflet Map Styles - IMPORTANT for map to display */
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 8px;
+}
+
+.leaflet-popup-content {
+  margin: 8px;
+}

@@ -1,8 +1,13 @@
-import { Calendar, MapPin, Users, Clock, Plus } from "lucide-react";
+import { Calendar, MapPin, Users, Clock, Plus, Search, 
+  Heart, Mountain, UtensilsCrossed, Bike, CircleUser } from "lucide-react";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
+import { Input } from "./ui/input";
+import React from "react";
 
 const EventsPage = () => {
+  const [activeCategory, setActiveCategory] = React.useState<string>("all");
+  const [searchQuery, setSearchQuery] = React.useState<string>("");
   const sampleEvents = [
     {
       id: 1,
@@ -73,13 +78,114 @@ const EventsPage = () => {
     <div className="h-full flex flex-col bg-background">
       {/* Header */}
       <div className="bg-gradient-hero text-white p-6 pb-8 shadow-lg">
-        <h1 className="text-3xl font-heading font-bold mb-2">Events & Meetups</h1>
-        <p className="text-white/90 text-sm">Join group activities & make friends</p>
+        <div className="flex flex-col gap-1">
+          <p className="font-bold text-lg mb-1 text-gray-900 bg-white/90 p-3 rounded-lg">Get to know about community Events that can enhance your experience in Sri Lanka</p>
+          <div>
+            <h1 className="text-3xl font-heading font-bold mb-1">Events & Meetups</h1>
+            <p className="text-white/90 text-sm">Join group activities & make friends</p>
+          </div>
+          <div className="relative">
+            <Input
+              type="text"
+              placeholder="Search events..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 bg-white border border-gray-200 text-gray-900 placeholder:text-gray-500 shadow-sm rounded-lg"
+            />
+            <Search className="w-4 h-4 absolute left-3 top-3 text-gray-500" />
+          </div>
+        </div>
+      </div>
+
+      {/* Stats Bar */}
+      <div className="bg-white border-b px-6 py-4">
+        <div className="flex justify-around items-center max-w-4xl mx-auto">
+          <div className="flex flex-col items-center">
+            <span className="text-2xl font-bold text-gray-900">
+              {sampleEvents.filter(event => new Date(event.date) > new Date()).length}
+            </span>
+            <span className="text-sm text-gray-600">Upcoming Events</span>
+          </div>
+          <div className="w-px h-12 bg-gray-200"></div>
+          <div className="flex flex-col items-center">
+            <span className="text-2xl font-bold text-gray-900">
+              {sampleEvents.filter(event => new Date(event.date) <= new Date()).length}
+            </span>
+            <span className="text-sm text-gray-600">Past Events</span>
+          </div>
+          <div className="w-px h-12 bg-gray-200"></div>
+          <div className="flex flex-col items-center">
+            <span className="text-2xl font-bold text-gray-900">
+              {sampleEvents.length}
+            </span>
+            <span className="text-sm text-gray-600">Total Events</span>
+          </div>
+          <div className="w-px h-12 bg-gray-200"></div>
+          <div className="flex flex-col items-center">
+            <span className="text-2xl font-bold text-gray-900">
+              {sampleEvents.reduce((total, event) => total + event.participants, 0)}
+            </span>
+            <span className="text-sm text-gray-600">Total Participants so Far </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Category Bar */}
+      <div className="bg-white border-b px-6 py-3 flex gap-2 overflow-x-auto">
+        <Button
+          variant={activeCategory === "all" ? "default" : "outline"}
+          size="sm"
+          onClick={() => setActiveCategory("all")}
+          className="rounded-full"
+        >
+          <CircleUser className="w-4 h-4 mr-2" />
+          All Events
+        </Button>
+        {Object.keys(categoryColors).map((category) => {
+          const getCategoryIcon = (cat: string) => {
+            switch (cat) {
+              case 'volunteer':
+                return <Heart className="w-4 h-4 mr-2" />;
+              case 'adventure':
+                return <Mountain className="w-4 h-4 mr-2" />;
+              case 'food':
+                return <UtensilsCrossed className="w-4 h-4 mr-2" />;
+              case 'wellness':
+                return <Bike className="w-4 h-4 mr-2" />;
+              default:
+                return null;
+            }
+          };
+          
+          return (
+            <Button
+              key={category}
+              variant={activeCategory === category ? "default" : "outline"}
+              size="sm"
+              onClick={() => setActiveCategory(category)}
+              className={`rounded-full flex items-center ${
+                activeCategory === category ? categoryColors[category] : ""
+              }`}
+            >
+              {getCategoryIcon(category)}
+              {category.charAt(0).toUpperCase() + category.slice(1)}
+            </Button>
+          );
+        })}
       </div>
 
       {/* Events List */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {sampleEvents.map((event) => (
+        {sampleEvents
+          .filter(event => {
+            const matchesCategory = activeCategory === "all" || event.category === activeCategory;
+            const matchesSearch = searchQuery === "" || 
+              event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              event.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              event.location.toLowerCase().includes(searchQuery.toLowerCase());
+            return matchesCategory && matchesSearch;
+          })
+          .map((event) => (
           <div
             key={event.id}
             className="bg-card rounded-xl shadow-card border border-border overflow-hidden card-hover"

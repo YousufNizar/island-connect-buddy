@@ -19,6 +19,11 @@ export interface Location {
   openingHours?: string;
   entryFee?: string;
   nearestPoliceStation?: string;
+  scamAlert?: {
+    level: "low" | "medium" | "high";
+    warnings: string[];
+    tips: string[];
+  };
 }
 
 export const sampleLocations: Location[] = [
@@ -92,10 +97,25 @@ export const sampleLocations: Location[] = [
     },
     rating: 4.9,
     reviewCount: 3201,
-    safetyStatus: "verified_safe",
+    safetyStatus: "caution",
     openingHours: "Open 24/7 (fort walls)",
     entryFee: "Free (museums extra)",
-    nearestPoliceStation: "0.5 km - Galle Fort Police"
+    nearestPoliceStation: "0.5 km - Galle Fort Police",
+    scamAlert: {
+      level: "medium",
+      warnings: [
+        "⚠️ Gem shop tours with high-pressure sales tactics",
+        "🎨 'Artists' who add unexpected charges for photos",
+        "🛍️ Shops with fake 'closing down' sales year-round",
+        "🚕 Tuk-tuk drivers offering 'special tours' at inflated prices"
+      ],
+      tips: [
+        "✅ Research gem certificates before buying (many are fake)",
+        "✅ Ask prices before taking photos or accepting services",
+        "✅ Compare prices across multiple shops",
+        "✅ Walk the fort - it's small and easy to explore yourself"
+      ]
+    }
   },
   {
     id: 4,
@@ -140,10 +160,25 @@ export const sampleLocations: Location[] = [
     },
     rating: 4.8,
     reviewCount: 4129,
-    safetyStatus: "verified_safe",
+    safetyStatus: "caution",
     openingHours: "5:30 AM - 8:00 PM",
     entryFee: "Rs 2,000",
-    nearestPoliceStation: "0.8 km - Kandy Central Police"
+    nearestPoliceStation: "0.8 km - Kandy Central Police",
+    scamAlert: {
+      level: "medium",
+      warnings: [
+        "⚠️ Fake 'official guides' outside temple entrance",
+        "💰 Inflated flower/offering prices near entrance",
+        "🚕 Tuk-tuk drivers may claim temple is 'closed' to take you elsewhere",
+        "👔 Shops selling 'temple-approved' clothing at 5x normal price"
+      ],
+      tips: [
+        "✅ Buy flowers from shops away from temple (Rs 100 vs Rs 500)",
+        "✅ Official guides have government ID badges",
+        "✅ Temple is rarely closed except for special ceremonies",
+        "✅ Modest clothing can be rented inside for Rs 200"
+      ]
+    }
   },
   {
     id: 6,
@@ -212,10 +247,26 @@ export const sampleLocations: Location[] = [
     },
     rating: 4.7,
     reviewCount: 1045,
-    safetyStatus: "verified_safe",
+    safetyStatus: "caution",
     openingHours: "Tours: 6 PM daily",
     entryFee: "$25 per person",
-    nearestPoliceStation: "0.3 km - Pettah Police Station"
+    nearestPoliceStation: "0.3 km - Pettah Police Station",
+    scamAlert: {
+      level: "high",
+      warnings: [
+        "🚨 Pickpockets active in crowded Pettah Market area",
+        "💰 Money changers offering 'better rates' may use sleight of hand",
+        "🎫 Unauthorized 'tour guides' charging excessive fees",
+        "📱 Be alert - phone snatching from tuk-tuks reported"
+      ],
+      tips: [
+        "✅ Book tours through verified platforms only",
+        "✅ Keep valuables in front pockets or money belt",
+        "✅ Use official money changers with proper signage",
+        "✅ Travel in groups, especially after dark",
+        "✅ Keep phones secured - don't use them near road"
+      ]
+    }
   },
   {
     id: 9,

@@ -32,9 +32,27 @@ cd <YOUR_PROJECT_NAME>
 # Step 3: Install the necessary dependencies.
 npm i
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Step 4: Start the development server
 npm run dev
 ```
+
+## 🗺️ **Map is Ready to Use!**
+
+**Good news:** The map works immediately with **NO setup required**!
+
+We're using **Leaflet** with **OpenStreetMap** which means:
+- ✅ **No API keys needed**
+- ✅ **No sign-up required**
+- ✅ **100% FREE forever**
+- ✅ **Works out of the box**
+
+Just run `npm run dev` and you're ready to go! 🎉
+
+📖 **Documentation:**
+- [Leaflet Map Guide](./LEAFLET_MAP_COMPLETE.md) - **How it works & customization**
+- [Firebase Setup](./docs/FIREBASE_SETUP.md) - Optional, for ratings/reviews
+- [Quick Start](./docs/QUICKSTART.md)
+- [Troubleshooting](./docs/TROUBLESHOOTING.md)
 
 **Edit a file directly in GitHub**
 

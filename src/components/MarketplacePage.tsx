@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Filter, Star, Clock, Users, MapPin, Award, ChevronRight } from "lucide-react";
+import { Search, Filter, Star, Clock, Users, MapPin, Award, Map, List, Coffee, Palette, Leaf, Soup, Hammer, Archive  } from "lucide-react";
 import { experiences, artisans } from "@/data/experiences";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -10,15 +10,16 @@ const MarketplacePage = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedExperience, setSelectedExperience] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [viewMode, setViewMode] = useState<"list" | "map">("list");
 
   const categories = [
-    { id: "all", label: "All", icon: "🎨" },
-    { id: "tea", label: "Tea", icon: "🍵" },
-    { id: "batik", label: "Batik", icon: "🎨" },
-    { id: "coconut", label: "Coconut", icon: "🥥" },
-    { id: "cuisine", label: "Cuisine", icon: "🍜" },
-    { id: "pottery", label: "Pottery", icon: "🏺" },
-    { id: "woodcraft", label: "Woodcraft", icon: "🪵" },
+    { id: "all", label: "All", icon: List },
+    { id: "tea", label: "Tea", icon: Coffee },
+    { id: "batik", label: "Batik", icon: Palette },
+    { id: "coconut", label: "Coconut", icon: Leaf },
+    { id: "cuisine", label: "Cuisine", icon: Soup },
+    { id: "pottery", label: "Pottery", icon: Archive  },
+    { id: "woodcraft", label: "Woodcraft", icon: Hammer },
   ];
 
   const filteredExperiences = experiences.filter((exp) => {
@@ -35,15 +36,15 @@ const MarketplacePage = () => {
   const selectedExp = experiences.find(exp => exp.id === selectedExperience);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
+    <div className="min-h-screen bg-[#F3F3F3]">
       {/* Header */}
-      <div className="bg-card border-b border-border sticky top-0 z-40 backdrop-blur-lg bg-card/95">
+      <div className="bg-[#F3F3F3] border-b border-border sticky top-0 z-40">
         <div className="p-4 space-y-4">
           <div>
             <h1 className="text-2xl font-bold text-foreground mb-1">
-              Authentic Sri Lankan Marketplace
+              Sri Lankan Marketplaces
             </h1>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground mb-6">
               Learn from verified local artisans • Hands-on cultural experiences
             </p>
           </div>
@@ -69,66 +70,204 @@ const MarketplacePage = () => {
 
           {/* Category Pills */}
           <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-            {categories.map((cat) => (
-              <button
-                key={cat.id}
-                onClick={() => setSelectedCategory(cat.id)}
-                className={`flex items-center gap-1.5 px-4 py-2 rounded-full whitespace-nowrap transition-all ${
-                  selectedCategory === cat.id
-                    ? "bg-primary text-primary-foreground shadow-md scale-105"
-                    : "bg-muted text-muted-foreground hover:bg-muted/80"
-                }`}
-              >
-                <span>{cat.icon}</span>
-                <span className="text-sm font-medium">{cat.label}</span>
-              </button>
-            ))}
+            {categories.map((cat) => {
+              const Icon = cat.icon; // assign the component
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => setSelectedCategory(cat.id)}
+                  className={`flex items-center gap-1.5 px-4 py-1 rounded-full whitespace-nowrap transition-all ${
+                    selectedCategory === cat.id
+                      ? "bg-[#122C34] text-white shadow-md scale-105 font-semibold"
+                      : "bg-white border border-[#122C34]/20 text-[#122C34] hover:bg-[#122C34]/5"
+                  }`}
+                >
+                  <Icon className="w-5 h-5" /> {/* render as component */}
+                  <span className="text-sm font-medium">{cat.label}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* View Mode Toggle */}
+          <div className="flex gap-2 mt-2">
+            <Button
+              variant={viewMode === "list" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setViewMode("list")}
+              className="flex-1"
+            >
+              <List className="w-4 h-4 mr-2" />
+              List View
+            </Button>
+            <Button
+              variant={viewMode === "map" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setViewMode("map")}
+              className="flex-1"
+            >
+              <Map className="w-4 h-4 mr-2" />
+              Map View
+            </Button>
           </div>
         </div>
       </div>
 
-      {/* Featured Section */}
-      <div className="p-4 space-y-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-foreground">
-            🌟 Featured Experiences
-          </h2>
-          <button className="text-sm text-primary font-medium flex items-center gap-1">
-            See all
-            <ChevronRight className="w-4 h-4" />
-          </button>
+      {/* Map View Section */}
+      {viewMode === "map" && (
+        <div className="h-[calc(100vh-280px)] relative">
+          <Card className="overflow-hidden h-full m-4">
+            <CardContent className="p-0 h-full">
+              <div className="relative h-full bg-[#F3F3F3]">
+                {/* Map Header */}
+                <div className="absolute top-0 left-0 right-0 bg-gradient-to-b from-black/60 to-transparent p-4 z-10">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-white font-semibold flex items-center gap-2">
+                      <MapPin className="w-5 h-5" />
+                      Artisan Locations Map
+                    </h3>
+                    <Badge className="bg-white/90 text-foreground hover:bg-white">
+                      {filteredExperiences.length} experiences
+                    </Badge>
+                  </div>
+                </div>
+
+                {/* Map Visualization */}
+                <div className="absolute inset-0 flex items-center justify-center p-8">
+                  <div className="relative w-full h-full max-w-2xl mx-auto">
+                    {/* Sri Lanka island outline representation */}
+                    <svg viewBox="0 0 400 500" className="w-full h-full opacity-30">
+                      <path
+                        d="M200 50 L250 100 L280 150 L290 200 L280 250 L250 300 L220 350 L180 380 L150 350 L120 280 L110 200 L120 150 L150 100 Z"
+                        fill="currentColor"
+                        className="text-primary"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      />
+                    </svg>
+
+                    {/* Artisan location pins */}
+                    {filteredExperiences.map((exp, index) => {
+                      // Distribute pins across the map based on actual data or pseudo-random positions
+                      const positions = [
+                        { top: '15%', left: '45%' },
+                        { top: '25%', left: '55%' },
+                        { top: '35%', left: '40%' },
+                        { top: '45%', left: '60%' },
+                        { top: '20%', left: '35%' },
+                        { top: '40%', left: '50%' },
+                        { top: '30%', left: '65%' },
+                        { top: '50%', left: '45%' },
+                        { top: '55%', left: '55%' },
+                        { top: '60%', left: '40%' },
+                        { top: '65%', left: '50%' },
+                        { top: '70%', left: '45%' },
+                      ];
+                      const pos = positions[index % positions.length];
+                      const artisan = getArtisan(exp.artisanId);
+                      
+                      return (
+                        <div
+                          key={exp.id}
+                          className="absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer group z-20"
+                          style={{ top: pos.top, left: pos.left }}
+                          onClick={() => setSelectedExperience(exp.id)}
+                        >
+                          <div className="relative">
+                            {/* Pin */}
+                            <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center shadow-xl animate-pulse group-hover:scale-125 transition-all border-4 border-white dark:border-gray-800">
+                              <MapPin className="w-6 h-6 text-primary-foreground" />
+                            </div>
+                            {/* Tooltip */}
+                            <div className="absolute -top-32 left-1/2 -translate-x-1/2 bg-card border-2 border-border rounded-xl p-3 shadow-2xl opacity-0 group-hover:opacity-100 transition-all w-64 pointer-events-none z-30">
+                              <div className="flex gap-2">
+                                <img 
+                                  src={exp.images[0]} 
+                                  alt={exp.title}
+                                  className="w-16 h-16 rounded-lg object-cover"
+                                />
+                                <div className="flex-1 min-w-0">
+                                  <div className="text-sm font-semibold line-clamp-2">{exp.title}</div>
+                                  <div className="text-xs text-muted-foreground mt-1">
+                                    by {artisan?.name}
+                                  </div>
+                                  <div className="flex items-center gap-2 mt-1">
+                                    <span className="text-sm font-bold text-primary">${exp.price}</span>
+                                    <span className="flex items-center gap-1 text-xs">
+                                      <Star className="w-3 h-3 fill-yellow-500 text-yellow-500" />
+                                      {exp.rating}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Map Footer */}
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
+                  <div className="flex items-center justify-between text-white text-sm">
+                    <p className="flex items-center gap-2">
+                      <MapPin className="w-4 h-4" />
+                      Click pins to view details
+                    </p>
+                    <p className="text-xs opacity-75">
+                      {filteredExperiences.length} artisans shown
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
+      )}
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-3 gap-3">
-          <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
-            <CardContent className="p-3 text-center">
-              <div className="text-2xl font-bold text-primary">500+</div>
-              <div className="text-xs text-muted-foreground mt-1">Verified Artisans</div>
-            </CardContent>
-          </Card>
-          <Card className="bg-gradient-to-br from-green-500/10 to-green-500/5 border-green-500/20">
-            <CardContent className="p-3 text-center">
-              <div className="text-2xl font-bold text-green-600 dark:text-green-400">4.8★</div>
-              <div className="text-xs text-muted-foreground mt-1">Avg. Rating</div>
-            </CardContent>
-          </Card>
-          <Card className="bg-gradient-to-br from-blue-500/10 to-blue-500/5 border-blue-500/20">
-            <CardContent className="p-3 text-center">
-              <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">10k+</div>
-              <div className="text-xs text-muted-foreground mt-1">Happy Tourists</div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+      {/* List View Section */}
+      {viewMode === "list" && (
+        <>
+          {/* Featured Section */}
+          <div className="p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-foreground">
+                🌟 Featured Experiences
+              </h2>
+            </div>
 
-      {/* Experience Cards */}
-      <div className="p-4 space-y-4 pb-24">
-        <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-          {filteredExperiences.length} experiences available
-        </h3>
+            {/* Stats Cards */}
+            <div className="grid grid-cols-3 gap-3">
+              <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
+                <CardContent className="p-3 text-center">
+                  <div className="text-2xl font-bold text-primary">500+</div>
+                  <div className="text-xs text-muted-foreground mt-1">Verified Artisans</div>
+                </CardContent>
+              </Card>
+              <Card className="bg-gradient-to-br from-green-500/10 to-green-500/5 border-green-500/20">
+                <CardContent className="p-3 text-center">
+                  <div className="text-2xl font-bold text-green-600 dark:text-green-400">4.8★</div>
+                  <div className="text-xs text-muted-foreground mt-1">Avg. Rating</div>
+                </CardContent>
+              </Card>
+              <Card className="bg-gradient-to-br from-blue-500/10 to-blue-500/5 border-blue-500/20">
+                <CardContent className="p-3 text-center">
+                  <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">10k+</div>
+                  <div className="text-xs text-muted-foreground mt-1">Happy Tourists</div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
 
-        {filteredExperiences.map((experience) => {
+          {/* Experience Cards */}
+          <div className="p-4 pb-24">
+            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-4">
+              {filteredExperiences.length} experiences available
+            </h3>
+
+            <div className="grid grid-cols-2 gap-4">
+              {filteredExperiences.map((experience) => {
           const artisan = getArtisan(experience.artisanId);
           if (!artisan) return null;
 
@@ -229,25 +368,28 @@ const MarketplacePage = () => {
                     <span className="text-2xl font-bold text-foreground">${experience.price}</span>
                     <span className="text-sm text-muted-foreground"> / person</span>
                   </div>
-                  <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
+                  <Button>
                     Book Now
                   </Button>
                 </div>
               </CardContent>
             </Card>
           );
-        })}
+            })}
+            </div>
 
-        {filteredExperiences.length === 0 && (
-          <div className="text-center py-12">
-            <div className="text-4xl mb-4">🔍</div>
-            <h3 className="text-lg font-semibold text-foreground mb-2">No experiences found</h3>
-            <p className="text-sm text-muted-foreground">
-              Try adjusting your filters or search query
-            </p>
+            {filteredExperiences.length === 0 && (
+              <div className="text-center py-12">
+                <div className="text-4xl mb-4">🔍</div>
+                <h3 className="text-lg font-semibold text-foreground mb-2">No experiences found</h3>
+                <p className="text-sm text-muted-foreground">
+                  Try adjusting your filters or search query
+                </p>
+              </div>
+            )}
           </div>
-        )}
-      </div>
+        </>
+      )}
 
       {/* Experience Detail Modal */}
       {selectedExp && (

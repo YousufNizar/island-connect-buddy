@@ -1,0 +1,67 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ===== RATINGS COLLECTION =====
+    match /ratings/{ratingId} {
+      // Anyone can read ratings
+      allow read: if true;
+      
+      // Only authenticated users can create ratings
+      // Validate data structure
+      allow create: if request.auth != null &&
+                      request.resource.data.keys().hasAll(['locationId', 'userId', 'rating', 'comment', 'category', 'timestamp', 'helpful_count', 'isVerified']) &&
+                      request.resource.data.rating >= 1 &&
+                      request.resource.data.rating <= 5 &&
+                      request.resource.data.comment.size() >= 10 &&
+                      request.resource.data.comment.size() <= 300 &&
+                      request.resource.data.category in ['safety', 'eco_friendly', 'cultural', 'general'] &&
+                      request.resource.data.userId == request.auth.uid &&
+                      request.resource.data.helpful_count == 0 &&
+                      request.resource.data.isVerified == false;
+      
+      // Users can only update their own ratings (for helpful count increment)
+      // Or update their own review within 24 hours
+      allow update: if request.auth != null &&
+                      (
+                        // Allow incrementing helpful_count by anyone
+                        (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['helpful_count']) &&
+                         request.resource.data.helpful_count == resource.data.helpful_count + 1)
+                        ||
+                        // Allow user to edit their own review within 24 hours
+                        (request.auth.uid == resource.data.userId &&
+                         request.time < resource.data.timestamp + duration.value(24, 'h'))
+                      );
+      
+      // Users can only delete their own ratings within 24 hours
+      allow delete: if request.auth != null &&
+                      request.auth.uid == resource.data.userId &&
+                      request.time < resource.data.timestamp + duration.value(24, 'h');
+    }
+    
+    // ===== SUSTAINABILITY METRICS COLLECTION =====
+    match /sustainability_metrics/{metricsId} {
+      // Anyone can read sustainability metrics
+      allow read: if true;
+      
+      // Only admin users can write sustainability metrics
+      // Set admin custom claims in Firebase Auth
+      allow write: if request.auth != null && 
+                      request.auth.token.admin == true;
+    }
+    
+    // ===== USER PROFILES (if needed) =====
+    match /users/{userId} {
+      // Users can read their own profile and public profiles
+      allow read: if true;
+      
+      // Users can only update their own profile
+      allow update: if request.auth != null && 
+                      request.auth.uid == userId;
+      
+      // Users can create their own profile
+      allow create: if request.auth != null && 
+                      request.auth.uid == userId;
+    }
+  }
+}
