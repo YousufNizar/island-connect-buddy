@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { MapPin, Users, Calendar, Shield, User, Store } from "lucide-react";
 import MapView from "@/components/MapView";
-import ConnectFeed from "@/components/ConnectFeed";
+import { ConnectFeed } from "@/components/ConnectFeed";
 import EventsPage from "@/components/EventsPage";
 import SafetyPage from "@/components/SafetyPage";
 import ProfilePage from "@/components/ProfilePage";
@@ -34,7 +34,7 @@ const Index = () => {
 
       {/* Bottom Navigation */}
       <nav className="fixed bottom-0 left-0 right-0 bg-card border-t border-border z-50 safe-area-inset-bottom">
-        <div className="flex items-center justify-around h-16 px-2">
+        <div className="flex items-center justify-around h-14 sm:h-16 px-1 sm:px-2">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -42,14 +42,14 @@ const Index = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex flex-col items-center justify-center gap-1 px-3 py-2 rounded-lg transition-all duration-200 ${
+                className={`flex flex-col items-center justify-center gap-0.5 sm:gap-1 px-1.5 sm:px-3 py-1.5 sm:py-2 rounded-lg transition-all duration-200 flex-1 max-w-[80px] ${
                   isActive
                     ? "text-primary scale-105"
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                <Icon className={`w-6 h-6 ${isActive ? "animate-bounce-subtle" : ""}`} />
-                <span className="text-xs font-medium">{tab.label}</span>
+                <Icon className={`w-5 h-5 sm:w-6 sm:h-6 ${isActive ? "animate-bounce-subtle" : ""}`} />
+                <span className="text-[10px] sm:text-xs font-medium truncate w-full text-center">{tab.label}</span>
               </button>
             );
           })}
