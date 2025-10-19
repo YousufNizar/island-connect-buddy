@@ -178,36 +178,25 @@ const EventsPage = () => {
   return (
     <div className="h-full flex flex-col bg-background">
       {/* Header */}
-      <div className="bg-gradient-hero text-white p-3 sm:p-4 pb-2 sm:pb-3 shadow-lg">
-        <div className="p-1 sm:p-2 space-y-1 sm:space-y-2">
-          <div className="hidden sm:block">
-            <h1 className="text-xl font-bold text-foreground mb-0.5">
-              Sri Lankan Cultural Events
-            </h1>
-            <p className="text-xs text-muted-foreground mb-1">
-              Experience vibrant traditions • Discover celebrations across the island
-            </p>
-          </div>
+      <div className="p-6 pb-4 border-b border-border">
+        <div className="space-y-1">
+          <h1 className="text-2xl font-heading font-bold tracking-tight">Events & Meetups</h1>
+          <p className="text-sm text-muted-foreground">Join group activities & make friends</p>
+        </div>
+      </div>
 
-          <div>
-            <h1 className="text-xl sm:text-2xl font-heading font-bold mb-0.5">Events & Meetups</h1>
-            <p className="text-white/90 text-xs">Join group activities & make friends</p>
-          </div>
-
-          <div className="relative mt-1">
-           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
-            <input
-              type="text"
-              placeholder="Search events..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 sm:pl-10 pr-4 py-2 sm:py-3 text-sm sm:text-base bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground
-                        focus:outline-none focus:ring-2 focus:ring-[#122C34] focus:ring-offset-0"
-            />
-
-          </div>
-
-
+      {/* Search Bar */}
+      <div className="px-6 py-4 border-b border-border">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+          <input
+            type="text"
+            placeholder="Search events..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-10 pr-4 py-3 text-sm bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground
+                      focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-0"
+          />
         </div>
       </div>
 
