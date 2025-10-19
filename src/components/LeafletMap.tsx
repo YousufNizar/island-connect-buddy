@@ -159,42 +159,6 @@ export const LeafletMap: React.FC<LeafletMapProps> = ({
   return (
     <div className="h-full w-full relative min-h-[400px]">
       <div ref={mapRef} className="h-full w-full" style={{ minHeight: '400px' }} />
-
-      {/* Info Badge with Legend */}
-      <div className="absolute top-4 left-4 z-[1000] bg-white/95 backdrop-blur-sm rounded-lg shadow-lg p-3 max-w-xs">
-        <div className="flex items-start gap-2">
-          <MapPin className="w-5 h-5 text-[#122C34] mt-0.5 flex-shrink-0" />
-          <div className="flex-1">
-            <h4 className="font-semibold text-sm">Leaflet Map ✓</h4>
-            <p className="text-xs text-gray-600 mb-2">
-              100% FREE • No API Key
-            </p>
-            <div className="text-xs space-y-1 pt-2 border-t border-gray-200">
-              <div className="font-semibold text-gray-700 mb-1">Map Legend:</div>
-              <div className="flex items-center gap-2">
-                <Sun className="w-5 h-5 text-blue-700" />
-                <span className="text-blue-700 font-medium">Beach</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Mountain className="w-5 h-5 text-green-700" />
-                <span className="text-green-700 font-medium">Mountains</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Star className="w-5 h-5 text-stone-700" />
-                <span className="text-stone-700 font-medium">Culture</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Coffee className="w-5 h-5 text-purple-700" />
-                <span className="text-purple-700 font-medium">Food</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Gem className="w-5 h-5 text-orange-700" />
-                <span className="text-orange-700 font-medium">Hidden Gem</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };
