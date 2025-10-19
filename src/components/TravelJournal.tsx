@@ -418,7 +418,7 @@ const TravelJournal = () => {
                   >
                     <Heart className={`w-4 h-4 transition-all duration-300 ${
                       likedEntries.has(entry.id) 
-                        ? '!fill-red-500 !text-red-500 scale-118' 
+                        ? '!fill-red-500 !text-red-500 scale-110' 
                         : 'group-hover:fill-red-400 group-hover:text-red-400 group-hover:scale-105'
                     }`} />
                     <span className={likedEntries.has(entry.id) ? 'font-bold' : ''}>{entry.likes}</span>
