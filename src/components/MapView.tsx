@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Search, X } from "lucide-react";
+import { Search, X, MapPin, Sun, Mountain, Star, Coffee, Gem } from "lucide-react";
 import { sampleLocations } from "@/data/locations";
 import LocationDetailModal from "./LocationDetailModal";
 import { LeafletMap } from "./LeafletMap";
@@ -77,6 +77,34 @@ const MapView = () => {
             )}
           </div>
         )}
+
+        {/* Map Legend */}
+        <div className="mt-4">
+          <div className="bg-white/95 backdrop-blur-sm rounded-lg shadow-lg p-3">
+            <div className="flex items-center gap-4 flex-wrap text-xs">
+              <div className="flex items-center gap-2">
+                <Sun className="w-5 h-5 text-blue-700" />
+                <span className="text-blue-700 font-medium">Beach</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Mountain className="w-5 h-5 text-green-700" />
+                <span className="text-green-700 font-medium">Mountains</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Star className="w-5 h-5 text-stone-700" />
+                <span className="text-stone-700 font-medium">Culture</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Coffee className="w-5 h-5 text-purple-700" />
+                <span className="text-purple-700 font-medium">Food</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Gem className="w-5 h-5 text-orange-700" />
+                <span className="text-orange-700 font-medium">Hidden Gem</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Map Container */}
