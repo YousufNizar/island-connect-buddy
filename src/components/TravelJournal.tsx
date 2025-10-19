@@ -54,6 +54,7 @@ const TravelJournal = () => {
   const [selectedEntryForShare, setSelectedEntryForShare] = useState<JournalEntry | null>(null);
   const [shareSuccess, setShareSuccess] = useState(false);
   const [uploadedPhotos, setUploadedPhotos] = useState<string[]>([]);
+  const [likedEntries, setLikedEntries] = useState<Set<string>>(new Set());
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [newEntry, setNewEntry] = useState({
     location: '',
@@ -66,18 +67,17 @@ const TravelJournal = () => {
     const files = e.target.files;
     if (files && files.length > 0) {
       const fileArray = Array.from(files);
-      const photoUrls: string[] = [];
-      
-      fileArray.forEach((file) => {
+      fileArray.forEach((file, idx) => {
         const reader = new FileReader();
         reader.onload = (event) => {
           if (event.target?.result) {
-            photoUrls.push(event.target.result as string);
-            setUploadedPhotos([...uploadedPhotos, ...photoUrls]);
-            toast({
-              title: "Photo uploaded! 📸",
-              description: `${fileArray.length} photo(s) added to your journal entry`,
-            });
+            setUploadedPhotos(prev => [...prev, event.target!.result as string]);
+            if (idx === fileArray.length - 1) {
+              toast({
+                title: "Photo uploaded! 📸",
+                description: `${fileArray.length} photo(s) added to your journal entry`,
+              });
+            }
           }
         };
         reader.readAsDataURL(file);
@@ -117,15 +117,33 @@ const TravelJournal = () => {
   };
 
   const handleLike = (id: string) => {
-    setEntries(entries.map(entry => 
-      entry.id === id 
-        ? { ...entry, likes: entry.likes + 1 }
-        : entry
-    ));
-    toast({
-      title: "Liked! ❤️",
-      description: "You liked this memory",
-    });
+    const newLikedEntries = new Set(likedEntries);
+    const isCurrentlyLiked = newLikedEntries.has(id);
+    
+    if (isCurrentlyLiked) {
+      newLikedEntries.delete(id);
+      setEntries(entries.map(entry => 
+        entry.id === id 
+          ? { ...entry, likes: entry.likes - 1 }
+          : entry
+      ));
+      toast({
+        title: "Unliked 💔",
+        description: "Removed from liked memories",
+      });
+    } else {
+      newLikedEntries.add(id);
+      setEntries(entries.map(entry => 
+        entry.id === id 
+          ? { ...entry, likes: entry.likes + 1 }
+          : entry
+      ));
+      toast({
+        title: "Liked! ❤️",
+        description: "You liked this memory",
+      });
+    }
+    setLikedEntries(newLikedEntries);
   };
 
   const handleComment = (id: string) => {
@@ -391,11 +409,19 @@ const TravelJournal = () => {
                 {/* Engagement */}
                 <div className="flex items-center gap-2 sm:gap-4 pt-2 border-t border-border flex-wrap">
                   <button 
-                    className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-red-500 transition-colors group"
+                    className={`flex items-center gap-1.5 text-sm transition-all group ${
+                      likedEntries.has(entry.id) 
+                        ? '!text-red-500 font-semibold' 
+                        : 'text-muted-foreground hover:text-red-500'
+                    }`}
                     onClick={() => handleLike(entry.id)}
                   >
-                    <Heart className="w-4 h-4 group-hover:fill-red-500" />
-                    <span>{entry.likes}</span>
+                    <Heart className={`w-4 h-4 transition-all duration-300 ${
+                      likedEntries.has(entry.id) 
+                        ? '!fill-red-500 !text-red-500 scale-118' 
+                        : 'group-hover:fill-red-400 group-hover:text-red-400 group-hover:scale-105'
+                    }`} />
+                    <span className={likedEntries.has(entry.id) ? 'font-bold' : ''}>{entry.likes}</span>
                   </button>
                   <button 
                     className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition-colors"

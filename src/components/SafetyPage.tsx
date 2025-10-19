@@ -83,9 +83,9 @@ const SafetyPage = () => {
   ];
 
   const emergencyContacts = [
-    { name: "Tourist Police", number: "1912", icon: "🚓" },
-    { name: "Emergency Hospital", number: "110", icon: "🏥" },
-    { name: "Fire & Rescue", number: "111", icon: "🚒" },
+    { name: "Tourist Police", number: "+94 11 242 1052", icon: "🚓" },
+    { name: "Emergency Hospital", number: "118", icon: "🏥" },
+    { name: "Fire & Rescue", number: "011-2422222", icon: "🚒" },
     { name: "Accident Service", number: "1990", icon: "🚑" }
   ];
 

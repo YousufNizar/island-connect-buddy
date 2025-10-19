@@ -1,21 +1,33 @@
 import { Calendar, MapPin, Users, Clock, Plus, Search, 
-  Heart, Mountain, UtensilsCrossed, Bike, CircleUser, X, Share2, MessageCircle } from "lucide-react";
+  Heart, Mountain, UtensilsCrossed, Bike, CircleUser, X, Share2, MessageCircle, Send, User, Instagram, Facebook, Twitter, Link, Copy } from "lucide-react";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import { Input } from "./ui/input";
+import { Textarea } from "./ui/textarea";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "./ui/dialog";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "./ui/popover";
 import React from "react";
+import { useToast } from "@/hooks/use-toast";
 
 const EventsPage = () => {
   const [activeCategory, setActiveCategory] = React.useState<string>("all");
   const [searchQuery, setSearchQuery] = React.useState<string>("");
   const [selectedEvent, setSelectedEvent] = React.useState<typeof sampleEvents[0] | null>(null);
   const [showEventDialog, setShowEventDialog] = React.useState(false);
+  const [showMessageDialog, setShowMessageDialog] = React.useState(false);
+  const [groupMessage, setGroupMessage] = React.useState("");
+  const [joinedEvents, setJoinedEvents] = React.useState<Set<number>>(new Set());
+  const [showSharePopover, setShowSharePopover] = React.useState(false);
+  const { toast } = useToast();
   
   const sampleEvents = [
     {
@@ -81,6 +93,86 @@ const EventsPage = () => {
     adventure: "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400",
     food: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
     wellness: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400"
+  };
+
+  const handleMessageHost = (e?: React.MouseEvent) => {
+    e?.preventDefault();
+    e?.stopPropagation();
+    setShowMessageDialog(true);
+    toast({
+      title: "Opening chat... 💬",
+      description: `Loading messages for ${selectedEvent?.title}`,
+    });
+  };
+
+  const handleSendMessage = () => {
+    if (groupMessage.trim()) {
+      toast({
+        title: "Message sent! 💬",
+        description: `Your message was sent to ${selectedEvent?.title} group`,
+      });
+      setShowMessageDialog(false);
+      setGroupMessage("");
+    }
+  };
+
+  const handleJoinEvent = (eventId: number, e?: React.MouseEvent) => {
+    e?.preventDefault();
+    e?.stopPropagation();
+    
+    const newJoinedEvents = new Set(joinedEvents);
+    const isCurrentlyJoined = newJoinedEvents.has(eventId);
+    
+    if (isCurrentlyJoined) {
+      newJoinedEvents.delete(eventId);
+      toast({
+        title: "Left event 👋",
+        description: "You've left this event. You can rejoin anytime!",
+      });
+    } else {
+      newJoinedEvents.add(eventId);
+      toast({
+        title: "Successfully joined! 🎉",
+        description: "You've successfully joined this event. Check your events list!",
+      });
+    }
+    setJoinedEvents(newJoinedEvents);
+  };
+
+  const handleShare = (platform: string) => {
+    if (!selectedEvent) return;
+    
+    const shareText = `Check out this event: ${selectedEvent.title} on ${selectedEvent.date} at ${selectedEvent.location}`;
+    const shareUrl = `https://taprova.com/events/${selectedEvent.id}`;
+    
+    switch(platform) {
+      case 'whatsapp':
+        window.open(`https://wa.me/?text=${encodeURIComponent(shareText + ' ' + shareUrl)}`, '_blank');
+        break;
+      case 'instagram':
+        // Instagram doesn't support direct sharing via URL, so we copy to clipboard
+        navigator.clipboard.writeText(shareText + ' ' + shareUrl);
+        toast({
+          title: "Copied to clipboard! 📋",
+          description: "Share on Instagram by pasting in your story or post",
+        });
+        break;
+      case 'facebook':
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank');
+        break;
+      case 'twitter':
+        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`, '_blank');
+        break;
+      case 'copy':
+        navigator.clipboard.writeText(shareUrl);
+        toast({
+          title: "Link copied! 🔗",
+          description: "Event link copied to clipboard",
+        });
+        break;
+    }
+    
+    setShowSharePopover(false);
   };
 
   return (
@@ -259,8 +351,13 @@ const EventsPage = () => {
                   <div className="text-[10px] sm:text-xs text-muted-foreground">
                     Hosted by <span className="font-semibold">{event.host}</span> ⭐ {event.hostRating}
                   </div>
-                  <Button size="sm" className="btn-primary text-xs h-8 sm:h-9">
-                    Join Event
+                  <Button 
+                    size="sm" 
+                    className="btn-primary text-xs h-8 sm:h-9"
+                    onClick={(e) => handleJoinEvent(event.id, e)}
+                    variant={joinedEvents.has(event.id) ? "outline" : "default"}
+                  >
+                    {joinedEvents.has(event.id) ? "Joined ✓" : "Join Event"}
                   </Button>
                 </div>
               </div>
@@ -314,7 +411,7 @@ const EventsPage = () => {
                     <p className="font-semibold">Hosted by {selectedEvent.host}</p>
                     <p className="text-sm text-muted-foreground">⭐ {selectedEvent.hostRating} rating</p>
                   </div>
-                  <Button variant="outline" size="sm">
+                  <Button variant="outline" size="sm" onClick={handleMessageHost}>
                     <MessageCircle className="w-4 h-4 mr-2" />
                     Message
                   </Button>
@@ -387,19 +484,164 @@ const EventsPage = () => {
 
                 {/* Action Buttons */}
                 <div className="flex gap-3 pt-4 border-t">
-                  <Button className="flex-1 btn-primary">
+                  <Button 
+                    className="flex-1 btn-primary"
+                    onClick={(e) => handleJoinEvent(selectedEvent.id, e)}
+                    variant={joinedEvents.has(selectedEvent.id) ? "outline" : "default"}
+                  >
                     <Users className="w-4 h-4 mr-2" />
-                    Join Event
+                    {joinedEvents.has(selectedEvent.id) ? "Joined ✓" : "Join Event"}
                   </Button>
-                  <Button variant="outline" size="icon">
-                    <Share2 className="w-4 h-4" />
-                  </Button>
+                  
+                  <Popover open={showSharePopover} onOpenChange={setShowSharePopover}>
+                    <PopoverTrigger asChild>
+                      <Button variant="outline" size="icon">
+                        <Share2 className="w-4 h-4" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-56 p-2" align="end">
+                      <div className="space-y-1">
+                        <p className="text-sm font-semibold px-2 py-1">Share via</p>
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start gap-3 h-10"
+                          onClick={() => handleShare('whatsapp')}
+                        >
+                          <MessageCircle className="w-4 h-4 text-green-600" />
+                          <span>WhatsApp</span>
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start gap-3 h-10"
+                          onClick={() => handleShare('instagram')}
+                        >
+                          <Instagram className="w-4 h-4 text-pink-600" />
+                          <span>Instagram</span>
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start gap-3 h-10"
+                          onClick={() => handleShare('facebook')}
+                        >
+                          <Facebook className="w-4 h-4 text-blue-600" />
+                          <span>Facebook</span>
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start gap-3 h-10"
+                          onClick={() => handleShare('twitter')}
+                        >
+                          <Twitter className="w-4 h-4 text-sky-500" />
+                          <span>Twitter</span>
+                        </Button>
+                        <div className="border-t my-1"></div>
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start gap-3 h-10"
+                          onClick={() => handleShare('copy')}
+                        >
+                          <Copy className="w-4 h-4" />
+                          <span>Copy Link</span>
+                        </Button>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                  
                   <Button variant="outline" size="icon">
                     <Heart className="w-4 h-4" />
                   </Button>
                 </div>
               </div>
             </>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Message Group Dialog */}
+      <Dialog open={showMessageDialog} onOpenChange={setShowMessageDialog}>
+        <DialogContent className="max-w-lg w-[95vw] max-h-[85vh] flex flex-col">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-xl">
+              <MessageCircle className="w-6 h-6" />
+              {selectedEvent?.title}
+            </DialogTitle>
+          </DialogHeader>
+          
+          {selectedEvent && (
+            <div className="flex-1 flex flex-col space-y-4 py-4">
+              {/* Group Chat Area */}
+              <div className="flex-1 bg-muted rounded-lg p-4 space-y-4 max-h-96 overflow-y-auto">
+                {/* Sample Messages */}
+                <div className="space-y-3">
+                  <div className="flex gap-3">
+                    <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                      <User className="w-4 h-4" />
+                    </div>
+                    <div className="flex-1 bg-background rounded-lg p-3">
+                      <p className="font-semibold text-sm mb-1">{selectedEvent.host}</p>
+                      <p className="text-sm">Hey everyone! Looking forward to this event! 🎉</p>
+                      <p className="text-xs text-muted-foreground mt-1">1 hour ago</p>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-3">
+                    <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                      <User className="w-4 h-4" />
+                    </div>
+                    <div className="flex-1 bg-background rounded-lg p-3">
+                      <p className="font-semibold text-sm mb-1">Sarah M.</p>
+                      <p className="text-sm">Can't wait! What should we bring?</p>
+                      <p className="text-xs text-muted-foreground mt-1">45 minutes ago</p>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-3">
+                    <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                      <User className="w-4 h-4" />
+                    </div>
+                    <div className="flex-1 bg-background rounded-lg p-3">
+                      <p className="font-semibold text-sm mb-1">Mike R.</p>
+                      <p className="text-sm">Don't forget comfortable shoes and water! 💧</p>
+                      <p className="text-xs text-muted-foreground mt-1">20 minutes ago</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Message Input */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Users className="w-4 h-4" />
+                  <span>{selectedEvent.participants} participants in this group</span>
+                </div>
+                <div className="flex gap-2">
+                  <Textarea
+                    placeholder="Type your message..."
+                    value={groupMessage}
+                    onChange={(e) => setGroupMessage(e.target.value)}
+                    rows={3}
+                    className="flex-1"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    className="flex-1"
+                    onClick={() => setShowMessageDialog(false)}
+                  >
+                    Close
+                  </Button>
+                  <Button
+                    className="flex-1"
+                    onClick={handleSendMessage}
+                    disabled={!groupMessage.trim()}
+                  >
+                    <Send className="w-4 h-4 mr-2" />
+                    Send Message
+                  </Button>
+                </div>
+              </div>
+            </div>
           )}
         </DialogContent>
       </Dialog>

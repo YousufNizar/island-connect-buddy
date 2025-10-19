@@ -726,11 +726,19 @@ const ProfilePage = () => {
                   <Button
                     variant="outline"
                     size="lg"
-                    className="flex-1 h-12"
+                    className={`flex-1 h-12 transition-all ${
+                      savedEvents.has(selectedEvent.id) 
+                        ? 'border-red-500 bg-red-50 hover:bg-red-100 dark:bg-red-950 dark:hover:bg-red-900' 
+                        : ''
+                    }`}
                     onClick={(e) => handleSaveEvent(selectedEvent.id, e)}
                   >
                     <Heart 
-                      className={`w-5 h-5 transition-all ${savedEvents.has(selectedEvent.id) ? 'fill-red-500 text-red-500 scale-110' : ''}`} 
+                      className={`w-5 h-5 transition-all duration-300 ${
+                        savedEvents.has(selectedEvent.id) 
+                          ? '!fill-red-500 !text-red-500 scale-110' 
+                          : 'text-muted-foreground hover:text-red-500 hover:scale-105'
+                      }`} 
                     />
                   </Button>
                 </div>
